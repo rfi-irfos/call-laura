@@ -13,6 +13,7 @@ readme = "README.md"
 
 [dependencies]
 call-laura-core = { workspace = true }
+laura-team = { path = "../laura-team" }
 serde = { workspace = true }
 serde_json = { workspace = true }
 tokio = { workspace = true }

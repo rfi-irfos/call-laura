@@ -1,5 +1,5 @@
 [workspace]
-members = ["laura-core", "laura-mcp", "laura-api"]
+members = ["laura-core", "laura-mcp", "laura-api", "laura-team"]
 resolver = "2"
 
 [workspace.package]

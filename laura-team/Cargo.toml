@@ -1,0 +1,15 @@
+[package]
+name = "laura-team"
+description = "call-laura proprietary agent team — Laura (orchestrator) + 15 deterministic expert agents (OSINT, security, legal/compliance, finance, ops, strategy, UX, data-privacy, ethics, threat-model, reliability, hiring, brand, research-method, product). Paid module."
+version.workspace = true
+edition.workspace = true
+license = "LicenseRef-BSL-1.1"
+repository.workspace = true
+homepage.workspace = true
+authors.workspace = true
+publish = false
+
+[dependencies]
+call-laura-core = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }

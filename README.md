@@ -129,6 +129,8 @@ laura-core/   pure lens logic — package name "call-laura-core" on crates.io,
               open-core, LGPL-3.0-or-later
 laura-mcp/    stdio MCP server binary (BSL-1.1)
 laura-api/    Fly-hosted HTTP surface, deploy-only, not published (BSL-1.1)
+laura-team/   proprietary 15-agent "SWAT team" module + Laura orchestrator (BSL-1.1)
+              — the paid analysis layer; free 4-lens core lives in laura-core
 ```
 
 ## License

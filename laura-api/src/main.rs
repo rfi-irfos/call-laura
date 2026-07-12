@@ -19,6 +19,7 @@ use axum::{
 };
 use call_laura_core::mcp::{handle_request, RpcRequest, RpcResponse};
 use call_laura_core::schema::ReviewRequest;
+use laura_team::orchestrator::{review_team, TeamRequest};
 use std::{
     collections::HashMap,
     net::SocketAddr,
@@ -79,7 +80,7 @@ async fn review_handler(
             StatusCode::TOO_MANY_REQUESTS,
             Json(serde_json::json!({ "error": format!("rate limit exceeded — {RATE_LIMIT_MAX_REQUESTS} requests per {RATE_LIMIT_WINDOW:?} per IP") })),
         )
-            .into_response();
+        .into_response();
     }
     if req.text.trim().is_empty() {
         return (StatusCode::BAD_REQUEST, Json(serde_json::json!({ "error": "text must not be empty" }))).into_response();
@@ -89,10 +90,35 @@ async fn review_handler(
             StatusCode::BAD_REQUEST,
             Json(serde_json::json!({ "error": "lenses must not be an empty array — omit the field entirely to run all four" })),
         )
-            .into_response();
+        .into_response();
     }
 
     let response = call_laura_core::review(&req);
+    (StatusCode::OK, Json(response)).into_response()
+}
+
+/// Paid module: Laura's 15-agent team review (`laura-team` crate, BSL-1.1).
+/// Key-gated and rate-limited like `/review`. Same honest-partial-failure
+/// semantics as the free core, but over the full expert stack.
+async fn team_handler(
+    State(state): State<std::sync::Arc<AppState>>,
+    ConnectInfo(addr): ConnectInfo<SocketAddr>,
+    headers: HeaderMap,
+    Json(req): Json<TeamRequest>,
+) -> impl IntoResponse {
+    if let Err((status, msg)) = require_api_key(&state, &headers) {
+        return (status, Json(serde_json::json!({ "error": msg }))).into_response();
+    }
+    if !check_rate_limit(&state, &addr.ip().to_string()) {
+        return (
+            StatusCode::TOO_MANY_REQUESTS,
+            Json(serde_json::json!({ "error": format!("rate limit exceeded — {RATE_LIMIT_MAX_REQUESTS} requests per {RATE_LIMIT_WINDOW:?} per IP") })),
+        )
+        .into_response();
+    }
+    // review_team itself refuses empty text and returns a partial marker when an
+    // agent has no classifiable signal — no need to pre-check here beyond key/rate.
+    let response = review_team(&req);
     (StatusCode::OK, Json(response)).into_response()
 }
 
@@ -139,6 +165,7 @@ async fn main() {
     let app = Router::new()
         .route("/health", get(health))
         .route("/review", post(review_handler))
+        .route("/team", post(team_handler))
         .route("/mcp", post(mcp_handler))
         .layer(tower_http::trace::TraceLayer::new_for_http())
         .layer(cors)

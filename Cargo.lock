@@ -239,6 +239,7 @@ version = "0.1.0"
 dependencies = [
  "axum",
  "call-laura-core",
+ "laura-team",
  "serde",
  "serde_json",
  "tokio",
@@ -252,9 +253,19 @@ name = "laura-mcp"
 version = "0.1.0"
 dependencies = [
  "call-laura-core",
+ "laura-team",
  "serde",
  "serde_json",
  "tokio",
+]
+
+[[package]]
+name = "laura-team"
+version = "0.1.0"
+dependencies = [
+ "call-laura-core",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
