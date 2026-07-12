@@ -1,0 +1,16 @@
+[package]
+name = "laura-core"
+description = "Structured document review grounded in Laura Serna Gaviria's Human-AI Co-Evolution framework (UIP, 8-Layer Model) plus RFI-IRFOS's own resonance and ecocentric lenses. Fully deterministic and local — no network call, no API key."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+authors.workspace = true
+keywords.workspace = true
+categories.workspace = true
+readme = "README.md"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }

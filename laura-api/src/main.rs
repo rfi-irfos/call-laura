@@ -1,0 +1,152 @@
+//! `laura-api` — Fly-hosted HTTP surface for `call-laura`.
+//!
+//! Deploy-only server binary (see `Cargo.toml`: `publish = false`), matching
+//! `ternlang-api`'s convention. `laura-core::review()` is fully synchronous and
+//! local (no network call, no API key) — key-gating and rate-limiting here exist
+//! for basic abuse/DoS hygiene on a public endpoint, not cost protection (there's
+//! no per-request external API cost anymore).
+//!
+//! **Not yet deployed.** Per the plan's Day-0 decisions (Sec. 6), this must not go
+//! live publicly until Laura has reviewed real sample outputs and at least one real
+//! `LAURA_API_KEYS` value has been generated and distributed (not the placeholder
+//! this binary refuses to start without).
+
+use axum::{
+    extract::{ConnectInfo, State},
+    http::{HeaderMap, StatusCode},
+    response::IntoResponse,
+    routing::{get, post},
+    Json, Router,
+};
+use laura_core::mcp::{handle_request, RpcRequest, RpcResponse};
+use laura_core::schema::ReviewRequest;
+use std::{
+    collections::HashMap,
+    net::SocketAddr,
+    sync::Mutex,
+    time::{Duration, Instant},
+};
+
+const RATE_LIMIT_WINDOW: Duration = Duration::from_secs(60);
+const RATE_LIMIT_MAX_REQUESTS: usize = 10;
+
+struct AppState {
+    allowed_keys: Vec<String>,
+    rate_limiter: Mutex<HashMap<String, Vec<Instant>>>,
+}
+
+fn check_rate_limit(state: &AppState, ip: &str) -> bool {
+    let mut map = state.rate_limiter.lock().unwrap_or_else(|e| e.into_inner());
+    let now = Instant::now();
+    let entry = map.entry(ip.to_string()).or_default();
+    entry.retain(|t| now.duration_since(*t) < RATE_LIMIT_WINDOW);
+    if entry.len() >= RATE_LIMIT_MAX_REQUESTS {
+        return false;
+    }
+    entry.push(now);
+    true
+}
+
+fn require_api_key(state: &AppState, headers: &HeaderMap) -> Result<(), (StatusCode, String)> {
+    let provided = headers
+        .get("authorization")
+        .and_then(|v| v.to_str().ok())
+        .and_then(|v| v.strip_prefix("Bearer "))
+        .unwrap_or("");
+    if provided.is_empty() {
+        return Err((StatusCode::UNAUTHORIZED, "missing Authorization: Bearer <key> header".to_string()));
+    }
+    if !state.allowed_keys.iter().any(|k| k == provided) {
+        return Err((StatusCode::FORBIDDEN, "invalid API key".to_string()));
+    }
+    Ok(())
+}
+
+async fn health() -> impl IntoResponse {
+    Json(serde_json::json!({ "status": "ok", "service": "laura-api", "version": env!("CARGO_PKG_VERSION") }))
+}
+
+async fn review_handler(
+    State(state): State<std::sync::Arc<AppState>>,
+    ConnectInfo(addr): ConnectInfo<SocketAddr>,
+    headers: HeaderMap,
+    Json(req): Json<ReviewRequest>,
+) -> impl IntoResponse {
+    if let Err((status, msg)) = require_api_key(&state, &headers) {
+        return (status, Json(serde_json::json!({ "error": msg }))).into_response();
+    }
+    if !check_rate_limit(&state, &addr.ip().to_string()) {
+        return (
+            StatusCode::TOO_MANY_REQUESTS,
+            Json(serde_json::json!({ "error": format!("rate limit exceeded — {RATE_LIMIT_MAX_REQUESTS} requests per {RATE_LIMIT_WINDOW:?} per IP") })),
+        )
+            .into_response();
+    }
+    if req.text.trim().is_empty() {
+        return (StatusCode::BAD_REQUEST, Json(serde_json::json!({ "error": "text must not be empty" }))).into_response();
+    }
+    if req.lenses.is_empty() {
+        return (
+            StatusCode::BAD_REQUEST,
+            Json(serde_json::json!({ "error": "lenses must not be an empty array — omit the field entirely to run all four" })),
+        )
+            .into_response();
+    }
+
+    let response = laura_core::review(&req);
+    (StatusCode::OK, Json(response)).into_response()
+}
+
+/// MCP JSON-RPC over HTTP — what Smithery's `startCommand: type: http` expects at
+/// its `url`. Deliberately keyless (rate-limited only): matches
+/// `ternlang-mcp`'s own Smithery listing ("all tools free, no key needed") and
+/// there's no per-request external API cost here to protect against — this is
+/// local CPU work, not a paid inference call.
+async fn mcp_handler(
+    State(state): State<std::sync::Arc<AppState>>,
+    ConnectInfo(addr): ConnectInfo<SocketAddr>,
+    Json(req): Json<RpcRequest>,
+) -> impl IntoResponse {
+    if !check_rate_limit(&state, &addr.ip().to_string()) {
+        let id = req.id.clone().unwrap_or(serde_json::Value::Null);
+        return (StatusCode::TOO_MANY_REQUESTS, Json(RpcResponse::err(id, -32000, "rate limit exceeded"))).into_response();
+    }
+    (StatusCode::OK, Json(handle_request(req))).into_response()
+}
+
+#[tokio::main]
+async fn main() {
+    tracing_subscriber::fmt::init();
+
+    let allowed_keys: Vec<String> = std::env::var("LAURA_API_KEYS")
+        .unwrap_or_default()
+        .split(',')
+        .map(|s| s.trim().to_string())
+        .filter(|s| !s.is_empty())
+        .collect();
+    if allowed_keys.is_empty() {
+        eprintln!("[laura-api] fatal: LAURA_API_KEYS is not set (comma-separated allowlist) — refusing to start with zero valid keys, which would leave every request unauthorized rather than open.");
+        std::process::exit(1);
+    }
+
+    let port: u16 = std::env::var("PORT").ok().and_then(|p| p.parse().ok()).unwrap_or(8080);
+    let state = std::sync::Arc::new(AppState { allowed_keys, rate_limiter: Mutex::new(HashMap::new()) });
+
+    let cors = tower_http::cors::CorsLayer::new()
+        .allow_methods([axum::http::Method::GET, axum::http::Method::POST])
+        .allow_headers([axum::http::header::AUTHORIZATION, axum::http::header::CONTENT_TYPE])
+        .allow_origin(tower_http::cors::Any);
+
+    let app = Router::new()
+        .route("/health", get(health))
+        .route("/review", post(review_handler))
+        .route("/mcp", post(mcp_handler))
+        .layer(tower_http::trace::TraceLayer::new_for_http())
+        .layer(cors)
+        .with_state(state);
+
+    let addr = SocketAddr::from(([0, 0, 0, 0], port));
+    println!("[laura-api] listening on {addr}");
+    let listener = tokio::net::TcpListener::bind(addr).await.expect("bind failed");
+    axum::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>()).await.expect("server failed");
+}

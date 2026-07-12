@@ -1,0 +1,39 @@
+NOTE: This is a starting proposal, not yet confirmed by Laura Serna Gaviria. Per the
+project plan (~/.claude/plans/buzzing-foraging-lemur.md, Sec. 4), the choice between
+this tier and something more permissive for the server binaries specifically should be
+confirmed with her before laura-mcp is published or laura-api is deployed publicly.
+Delete this note once confirmed.
+
+-----------------------------------------------------------------------------
+
+Business Source License 1.1
+
+Licensor:             Laura Serna Gaviria and RFI-IRFOS (Simeon Kepp)
+Licensed Work:        laura-mcp, laura-api (the "Restricted Crates") — Version 0.1
+                      and later
+Additional Use Grant: You may use the Licensed Work for non-commercial,
+                      personal, research, or evaluation purposes only,
+                      provided you do not offer it as a hosted or managed
+                      service to third parties.
+Change Date:          2030-07-12
+Change License:       Apache License, Version 2.0
+
+For commercial licensing: licensing@rfi-irfos.com
+
+-----------------------------------------------------------------------------
+
+The Licensed Work is provided under the terms of the Business Source
+License 1.1 ("BSL"). Subject to the Additional Use Grant above, you may
+not use the Licensed Work for a Commercial Purpose (defined as any use
+that generates revenue, whether direct or indirect, including offering
+the Licensed Work as a service or incorporating it into a commercial
+product or workflow) without purchasing a commercial license from the
+Licensors.
+
+On the Change Date (2030-07-12), the Licensed Work will automatically
+convert to and be made available under the Apache License, Version 2.0.
+
+THE LICENSED WORK IS PROVIDED "AS IS". LICENSOR HEREBY DISCLAIMS ALL
+WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
+NON-INFRINGEMENT.

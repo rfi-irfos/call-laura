@@ -1,0 +1,69 @@
+NOTE: This is a starting proposal, not yet confirmed by Laura Serna Gaviria. Per the
+project plan (~/.claude/plans/buzzing-foraging-lemur.md, Sec. 4), she may prefer
+something more open than standard LGPL for the lens prompts specifically (e.g.
+CC-BY-SA on the prompt text itself, separate from the Rust code license), since they
+encode her own named, published research. Also unconfirmed: whether the OSF
+preprint's own license terms constrain what this crate is allowed to do with the
+8-Layer/UIP taxonomy at all — check before publishing. Delete this note once
+confirmed.
+
+─────────────────────────────────────────────────────────────────────────────
+
+                   GNU LESSER GENERAL PUBLIC LICENSE
+                       Version 3, 29 June 2007
+
+call-laura — Laura Serna Gaviria's Human-AI Co-Evolution review logic
+Copyright (C) 2026 Laura Serna Gaviria and RFI-IRFOS
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+─────────────────────────────────────────────────────────────────────────────
+
+SCOPE OF THIS LICENSE
+
+  laura-core — lens logic, prompts, NVIDIA client, shared schema — open core.
+
+The following are NOT covered by this license (see LICENSE-BSL):
+
+  laura-mcp — stdio MCP server binary
+  laura-api — Fly-hosted HTTP server binary
+
+This split is deliberate: the review *methodology* — the actual lens logic and
+prompts that operationalize Laura Serna Gaviria's published research — is kept
+maximally inspectable, so anyone can verify the tool isn't putting words in her
+mouth (see README, "Attribution & Sourcing"). The two server binaries that host
+that logic as a running service are the commercial tier.
+
+─────────────────────────────────────────────────────────────────────────────
+
+WHAT LGPL v3 MEANS IN PRACTICE
+
+You are free to:
+  - Use laura-core in any project, including proprietary software, without
+    open-sourcing your code.
+  - Link against laura-core dynamically or statically.
+  - Modify laura-core for your own use.
+
+You must:
+  - Make your modifications to laura-core available under LGPL v3 if you
+    distribute a modified version.
+  - Preserve this copyright notice and the LGPL headers in source files.
+  - Not misrepresent the origin of the software, and not present laura-core's
+    lens output as Laura Serna Gaviria's own direct review or as validated
+    research findings — see the mandatory `source`/`attribution_note` fields
+    in every lens result (`laura-core/src/schema.rs`).
+
+─────────────────────────────────────────────────────────────────────────────
+
+Full LGPL v3 license text: https://www.gnu.org/licenses/lgpl-3.0.txt

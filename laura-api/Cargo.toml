@@ -1,0 +1,24 @@
+[package]
+name = "laura-api"
+description = "call-laura Fly-hosted HTTP MCP surface — deploy-only server binary, ships via fly.io, not crates.io."
+version.workspace = true
+edition.workspace = true
+license = "LicenseRef-BSL-1.1"
+repository.workspace = true
+homepage.workspace = true
+authors.workspace = true
+publish = false
+
+[[bin]]
+name = "laura-api"
+path = "src/main.rs"
+
+[dependencies]
+laura-core = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true }
+axum = "0.8"
+tower-http = { version = "0.6", features = ["cors", "trace"] }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
