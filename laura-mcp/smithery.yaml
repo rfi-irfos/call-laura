@@ -1,0 +1,81 @@
+# Smithery MCP Registry — call-laura
+# https://smithery.ai/new (paste this file) or: npx @smithery/cli publish
+
+name: laura
+displayName: "call-laura — Human-AI Co-Evolution Review"
+description: |
+  Structured document review grounded in Laura Serna Gaviria's published
+  Human-AI Co-Evolution research framework (OSF preprint: User Integrity
+  Protocol, 8-Layer Model), plus two RFI-IRFOS-original lenses.
+
+  Submit any plan or document, get back structured findings across four
+  lenses — no opaque score, every finding cites the exact span of your text
+  it's reacting to. Fully deterministic and local: same input always produces
+  the same output.
+
+  **One tool, review_plan, always free — no key needed:**
+  - **eight_layer** — classifies each section against Laura's 8-Layer taxonomy
+    (facts/analysis/patterns/hypotheses/symbols/action/counterarguments/blind_spot),
+    flags entirely-absent layers
+  - **uip_check** — her User Integrity Protocol's four rules: stated
+    constraints, unsupported absolute claims, unverified "done" claims,
+    un-auditable conclusions
+  - **resonance** — flags low lexical overlap between sections that should
+    plausibly agree (e.g. goals vs. success criteria)
+  - **ecocentric** — missing environmental/downstream/long-term/systemic
+    consideration (RFI-IRFOS's own addition, not from Laura's framework)
+
+  Every finding self-discloses whether it's directly Laura Serna Gaviria's own
+  framework, this project's operationalization of a concept she names, or an
+  RFI-IRFOS addition unrelated to her research — see the full attribution
+  table in the repository README before trusting any output.
+
+  Co-designed by Laura Serna Gaviria (Emergent Interaction Lab), Simeon Kepp
+  (RFI-IRFOS), and Claude.
+
+version: "0.1.0"
+license: "BSL-1.1"
+homepage: "https://rfi-irfos.com"
+repository: "https://github.com/rfi-irfos/call-laura"
+author:
+  name: "Emergent Interaction Lab / RFI-IRFOS"
+  email: "contact@rfi-irfos.com"
+  url: "https://rfi-irfos.com"
+
+categories:
+  - developer-tools
+  - productivity
+  - ai-reasoning
+
+tags:
+  - document-review
+  - human-ai-interaction
+  - co-evolution
+  - deterministic
+  - no-hallucination
+
+# ─── Connection ──────────────────────────────────────────────────────────────
+#
+# HTTP transport (default, no install required):
+#   POST https://laura-api.fly.dev/mcp
+#
+# Stdio transport (local, full-speed):
+#   cargo install laura-mcp && laura-mcp
+
+configSchema:
+  type: object
+  title: "call-laura Configuration"
+  description: "review_plan is free — no key needed, on either transport."
+  properties: {}
+  required: []
+
+startCommand:
+  type: http
+  url: "https://laura-api.fly.dev/mcp"
+  configSchema:
+    type: object
+    title: "call-laura Configuration"
+    description: "review_plan is free — no key needed."
+    properties: {}
+    required: []
+  exampleConfig: {}

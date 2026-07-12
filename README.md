@@ -1,7 +1,8 @@
 # call-laura
 
 [![license](https://img.shields.io/badge/license-LGPL--3.0--or--later%20%2F%20BSL--1.1-blue)](./LICENSE)
-[![status](https://img.shields.io/badge/status-pre--release-orange)](#status)
+[![status](https://img.shields.io/badge/status-live-brightgreen)](#status)
+[![crates.io](https://img.shields.io/crates/v/call-laura-core.svg)](https://crates.io/crates/call-laura-core)
 
 **Structured document review grounded in Laura Serna Gaviria's Human–AI
 Co-Evolution research.** An MCP (Model Context Protocol) server: any agent submits
@@ -20,13 +21,16 @@ Co-designed by Laura Serna Gaviria (Emergent Interaction Lab), Simeon Kepp
 
 ## Status
 
-Pre-release. `call-laura-core`, `laura-mcp` (stdio), and `laura-api` (hosted HTTP) all
-build, and the full pipeline is verified end-to-end against a real document
-(28 unit tests + a live `review_plan` smoke test, <150ms, all four lenses).
-**Not yet published to crates.io or deployed publicly** — see
-`~/.claude/plans/buzzing-foraging-lemur.md` for the remaining go-live checklist,
-in particular Laura's own sign-off on real sample output, and the license
-confirmation flagged in `LICENSE-LGPL`/`LICENSE-BSL`.
+**Live**, 2026-07-12. Laura reviewed real sample output before this shipped.
+`call-laura-core` and `laura-mcp` are published on crates.io; `laura-api` is
+deployed at [laura-api.fly.dev](https://laura-api.fly.dev), both `/mcp`
+(what the [Smithery](https://smithery.ai) listing uses) and `/review`. 32 unit
+tests, verified end-to-end against both the local stdio server and the live
+public URL.
+
+License terms in `LICENSE-LGPL`/`LICENSE-BSL` are still explicitly marked as a
+starting proposal pending Laura's own final confirmation — read the NOTE at
+the top of each before relying on them for reuse.
 
 An earlier version of this tool called an LLM (NVIDIA-hosted) per lens. That
 path is gone — not deferred, removed — after the NVIDIA account hit a

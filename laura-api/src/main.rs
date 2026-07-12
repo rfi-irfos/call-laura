@@ -1,15 +1,14 @@
 //! `laura-api` — Fly-hosted HTTP surface for `call-laura`.
 //!
 //! Deploy-only server binary (see `Cargo.toml`: `publish = false`), matching
-//! `ternlang-api`'s convention. `laura-core::review()` is fully synchronous and
-//! local (no network call, no API key) — key-gating and rate-limiting here exist
-//! for basic abuse/DoS hygiene on a public endpoint, not cost protection (there's
-//! no per-request external API cost anymore).
+//! `ternlang-api`'s convention. `call_laura_core::review()` is fully synchronous
+//! and local (no network call, no API key) — key-gating and rate-limiting here
+//! exist for basic abuse/DoS hygiene on a public endpoint, not cost protection
+//! (there's no per-request external API cost anymore).
 //!
-//! **Not yet deployed.** Per the plan's Day-0 decisions (Sec. 6), this must not go
-//! live publicly until Laura has reviewed real sample outputs and at least one real
-//! `LAURA_API_KEYS` value has been generated and distributed (not the placeholder
-//! this binary refuses to start without).
+//! **Live** at https://laura-api.fly.dev, deployed 2026-07-12. `/mcp` (keyless,
+//! rate-limited) is what Smithery's listing points at. `/review` (key-gated) is
+//! the REST convenience route, `LAURA_API_KEYS` set as a Fly secret.
 
 use axum::{
     extract::{ConnectInfo, State},
