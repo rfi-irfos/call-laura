@@ -4,6 +4,20 @@
 "SWAT team". This is the *paid* layer: the deterministic, LGPL `call-laura-core`
 (review / `review_plan`) stays free; `laura-team` is BSL-1.1 and ships the full stack.
 
+## Why it matters
+
+`call-laura-core`'s four lenses catch a specific, narrow set of gaps in a plan or document.
+Real-world review pulls in far more domains at once — security, legal exposure, finance,
+operations, hiring language, accessibility — and a single generalist pass tends to either miss
+whole categories or blur them into one vague verdict. `laura-team` runs 15 domain-specialist
+agents over the *same* text in parallel, each one a narrow, deterministic pass looking for its
+own category of concern, then synthesizes what they found: which regions of the text multiple
+independent specialists flagged without being told to agree, and what the single highest-
+priority set of blockers actually is. That's the novelty — not "one more LLM opinion," but 15
+independently-reasoned, evidence-anchored passes reconciled into one prioritized answer, with
+the same no-fabrication discipline as the free core: nothing is flagged that isn't a verbatim
+span of your own input.
+
 ## What it is
 
 Laura coordinates 15 deterministic expert agents. Each agent is a **pure function** of the
