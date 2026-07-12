@@ -14,7 +14,7 @@ name = "laura-api"
 path = "src/main.rs"
 
 [dependencies]
-laura-core = { workspace = true }
+call-laura-core = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 tokio = { workspace = true }

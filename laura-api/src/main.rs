@@ -18,8 +18,8 @@ use axum::{
     routing::{get, post},
     Json, Router,
 };
-use laura_core::mcp::{handle_request, RpcRequest, RpcResponse};
-use laura_core::schema::ReviewRequest;
+use call_laura_core::mcp::{handle_request, RpcRequest, RpcResponse};
+use call_laura_core::schema::ReviewRequest;
 use std::{
     collections::HashMap,
     net::SocketAddr,
@@ -93,7 +93,7 @@ async fn review_handler(
             .into_response();
     }
 
-    let response = laura_core::review(&req);
+    let response = call_laura_core::review(&req);
     (StatusCode::OK, Json(response)).into_response()
 }
 

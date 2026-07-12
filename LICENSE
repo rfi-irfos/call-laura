@@ -4,7 +4,7 @@ Copyright (C) 2026 Laura Serna Gaviria and RFI-IRFOS
 STATUS: draft/starting proposal, not yet confirmed by Laura Serna Gaviria — see the
 NOTE at the top of LICENSE-LGPL and LICENSE-BSL before treating this as final.
 
-Open core (LGPL-3.0-or-later): laura-core
+Open core (LGPL-3.0-or-later): call-laura-core (crate name on crates.io; source lives in laura-core/)
 Full license text: https://www.gnu.org/licenses/lgpl-3.0.html
 See: LICENSE-LGPL
 

@@ -82,6 +82,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04"
 
 [[package]]
+name = "call-laura-core"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "cfg-if"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -230,7 +238,7 @@ name = "laura-api"
 version = "0.1.0"
 dependencies = [
  "axum",
- "laura-core",
+ "call-laura-core",
  "serde",
  "serde_json",
  "tokio",
@@ -240,18 +248,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "laura-core"
-version = "0.1.0"
-dependencies = [
- "serde",
- "serde_json",
-]
-
-[[package]]
 name = "laura-mcp"
 version = "0.1.0"
 dependencies = [
- "laura-core",
+ "call-laura-core",
  "serde",
  "serde_json",
  "tokio",

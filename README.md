@@ -20,7 +20,7 @@ Co-designed by Laura Serna Gaviria (Emergent Interaction Lab), Simeon Kepp
 
 ## Status
 
-Pre-release. `laura-core`, `laura-mcp` (stdio), and `laura-api` (hosted HTTP) all
+Pre-release. `call-laura-core`, `laura-mcp` (stdio), and `laura-api` (hosted HTTP) all
 build, and the full pipeline is verified end-to-end against a real document
 (28 unit tests + a live `review_plan` smoke test, <150ms, all four lenses).
 **Not yet published to crates.io or deployed publicly** — see
@@ -89,13 +89,13 @@ her work or this project's own judgment call.**
   version makes, said out loud rather than implied by confident-sounding output.
 - **Honest partial failure.** A lens with no classifiable input (e.g. `resonance`
   on a single-section document) reports its own `error` field rather than a
-  fabricated result — `laura-core::review` runs every lens independently.
+  fabricated result — `call_laura_core::review` runs every lens independently.
 
 ## Quick start
 
 ```bash
-cargo build --release -p laura-mcp
-claude mcp add laura -s user -- /path/to/target/release/laura-mcp
+cargo install laura-mcp
+claude mcp add laura -s user -- laura-mcp
 ```
 
 No API key, no environment setup. Then, from any MCP-connected agent:
@@ -106,28 +106,30 @@ No API key, no environment setup. Then, from any MCP-connected agent:
 // omit "lenses" to run all four; or request a subset, e.g. ["eight_layer","uip_check"]
 ```
 
-## Hosted API (not yet live)
+## Hosted API
 
-```bash
-export LAURA_API_KEYS=your-generated-key-here   # comma-separated allowlist
-cargo run --release -p laura-api
-# POST /review with Authorization: Bearer <key>, same JSON body as above.
-# GET /health for a liveness check. 10 req/min per IP by default — abuse/DoS
-# hygiene on a public endpoint, not cost protection (there's no external API
-# cost per request anymore).
-```
+`laura-api` is deployed to Fly.io. Two surfaces on the same server:
+
+- `POST /mcp` — MCP JSON-RPC over HTTP, keyless, rate-limited only. This is what
+  the [Smithery listing](https://smithery.ai) points at, so any MCP-connected
+  agent can use `review_plan` with zero setup.
+- `POST /review` — plain REST convenience endpoint, `Authorization: Bearer
+  <key>` required, same JSON body/response shape. `GET /health` for a liveness
+  check. 10 req/min per IP by default on both — abuse/DoS hygiene, not cost
+  protection (there's no external API cost per request anymore).
 
 ## Workspace layout
 
 ```
-laura-core/   pure lens logic — the open-core, LGPL-3.0-or-later part
+laura-core/   pure lens logic — package name "call-laura-core" on crates.io,
+              open-core, LGPL-3.0-or-later
 laura-mcp/    stdio MCP server binary (BSL-1.1)
 laura-api/    Fly-hosted HTTP surface, deploy-only, not published (BSL-1.1)
 ```
 
 ## License
 
-`laura-core`: LGPL-3.0-or-later. `laura-mcp`/`laura-api`: Business Source License
+`call-laura-core`: LGPL-3.0-or-later. `laura-mcp`/`laura-api`: Business Source License
 1.1 with a non-commercial/research use grant. **Draft, pending Laura Serna
 Gaviria's confirmation** — see the NOTE at the top of `LICENSE-LGPL` and
 `LICENSE-BSL`. Full terms in `LICENSE`.

@@ -1,4 +1,6 @@
-# laura-core
+# call-laura-core
+
+(Package name: `call-laura-core` — the crates.io name; source lives in the `laura-core/` directory, unchanged, to avoid a needless folder rename.)
 
 Pure review logic behind [`call-laura`](https://github.com/rfi-irfos/call-laura) —
 structured document review grounded in Laura Serna Gaviria's Human–AI
@@ -16,14 +18,14 @@ this crate produces.
 ## Usage
 
 ```rust
-use laura_core::schema::{Lens, ReviewRequest};
+use call_laura_core::schema::{Lens, ReviewRequest};
 
 let req = ReviewRequest {
     text: "your document here".into(),
     lenses: Lens::ALL.to_vec(),
     metadata: None,
 };
-let response = laura_core::review(&req);
+let response = call_laura_core::review(&req);
 ```
 
 License: LGPL-3.0-or-later. See the workspace root `LICENSE-LGPL`.

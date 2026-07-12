@@ -1,11 +1,11 @@
 //! `laura-mcp` — stdio JSON-RPC MCP server exposing a single tool, `review_plan`.
 //!
 //! All protocol logic (`RpcRequest`/`RpcResponse`, `handle_request`, `tools_list`)
-//! lives in `laura_core::mcp` and is shared verbatim with `laura-api`'s `/mcp` HTTP
+//! lives in `call_laura_core::mcp` and is shared verbatim with `laura-api`'s `/mcp` HTTP
 //! endpoint — the two transports can never drift apart in behavior. The only thing
 //! this binary owns is the stdio read/write loop.
 
-use laura_core::mcp::{handle_request, RpcRequest, RpcResponse};
+use call_laura_core::mcp::{handle_request, RpcRequest, RpcResponse};
 use serde_json::Value;
 use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
 

@@ -32,7 +32,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 SCOPE OF THIS LICENSE
 
-  laura-core — lens logic, prompts, NVIDIA client, shared schema — open core.
+  call-laura-core (crate name; source in laura-core/) — lens logic, shared MCP
+  protocol handling, shared schema — open core. Fully deterministic and local,
+  no network client.
 
 The following are NOT covered by this license (see LICENSE-BSL):
 
@@ -50,19 +52,19 @@ that logic as a running service are the commercial tier.
 WHAT LGPL v3 MEANS IN PRACTICE
 
 You are free to:
-  - Use laura-core in any project, including proprietary software, without
-    open-sourcing your code.
-  - Link against laura-core dynamically or statically.
-  - Modify laura-core for your own use.
+  - Use call-laura-core in any project, including proprietary software,
+    without open-sourcing your code.
+  - Link against call-laura-core dynamically or statically.
+  - Modify call-laura-core for your own use.
 
 You must:
-  - Make your modifications to laura-core available under LGPL v3 if you
+  - Make your modifications to call-laura-core available under LGPL v3 if you
     distribute a modified version.
   - Preserve this copyright notice and the LGPL headers in source files.
-  - Not misrepresent the origin of the software, and not present laura-core's
-    lens output as Laura Serna Gaviria's own direct review or as validated
-    research findings — see the mandatory `source`/`attribution_note` fields
-    in every lens result (`laura-core/src/schema.rs`).
+  - Not misrepresent the origin of the software, and not present
+    call-laura-core's lens output as Laura Serna Gaviria's own direct review
+    or as validated research findings — see the mandatory `source`/
+    `attribution_note` fields in every lens result (`laura-core/src/schema.rs`).
 
 ─────────────────────────────────────────────────────────────────────────────
 
