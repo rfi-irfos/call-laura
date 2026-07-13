@@ -7,10 +7,10 @@ FROM rust:1.86-slim AS builder
 RUN apt-get update && apt-get install -y pkg-config libssl-dev && rm -rf /var/lib/apt/lists/*
 WORKDIR /build
 COPY . .
-RUN cargo build --release -p laura-api
+RUN cargo build --release -p lauras-api
 
 FROM debian:bookworm-slim
 RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
-COPY --from=builder /build/target/release/laura-api /usr/local/bin/laura-api
+COPY --from=builder /build/target/release/lauras-api /usr/local/bin/lauras-api
 EXPOSE 8080
-CMD ["/usr/local/bin/laura-api"]
+CMD ["/usr/local/bin/lauras-api"]
