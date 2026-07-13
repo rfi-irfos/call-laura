@@ -1,13 +1,21 @@
-# call-laura
+# lauras (formerly call-laura)
 
 [![license](https://img.shields.io/badge/license-LGPL--3.0--or--later%20%2F%20BSL--1.1-blue)](./LICENSE)
 [![status](https://img.shields.io/badge/status-live-brightgreen)](#status)
-[![crates.io](https://img.shields.io/crates/v/call-laura-core.svg)](https://crates.io/crates/call-laura-core)
+[![crates.io](https://img.shields.io/crates/v/lauras-core.svg)](https://crates.io/crates/lauras-core)
+[![crates.io](https://img.shields.io/crates/v/lauras-mcp.svg)](https://crates.io/crates/lauras-mcp)
+[![crates.io](https://img.shields.io/crates/v/lauras-team.svg)](https://crates.io/crates/lauras-team)
+[![crates.io](https://img.shields.io/crates/v/lauras-api.svg)](https://crates.io/crates/lauras-api)
 
 **Structured document review grounded in Laura Serna Gaviria's Human–AI
 Co-Evolution research.** An MCP (Model Context Protocol) server: any agent submits
-a plan or document, gets back structured findings across four lenses — no opaque
-score, every finding cites the exact span of your text it's reacting to.
+a plan or document, gets back structured findings across four lenses (free) or the
+full 15-agent expert team (`review_team`) — no opaque score, every finding cites
+the exact span of your text it's reacting to.
+
+Renamed 2026-07-13: `call-laura-core` → `lauras-core`, `laura-mcp` → `lauras-mcp`,
+`laura-api` → `lauras-api`, `laura-team` → `lauras-team`. All four now publish
+together at v0.2.0.
 
 **Fully deterministic and local.** No network call, no API key, no external
 dependency. The same document always produces the same review — every finding
@@ -21,16 +29,13 @@ Co-designed by Laura Serna Gaviria (Emergent Interaction Lab), Simeon Kepp
 
 ## Status
 
-**Live**, 2026-07-12. Laura reviewed real sample output before this shipped.
-`call-laura-core` and `laura-mcp` are published on crates.io; `laura-api` is
-deployed at [laura-api.fly.dev](https://laura-api.fly.dev), both `/mcp`
-(what the [Smithery](https://smithery.ai) listing uses) and `/review`. 32 unit
-tests, verified end-to-end against both the local stdio server and the live
+**Live**, 2026-07-13. Laura reviewed real sample output before this shipped, and confirmed
+the licensing terms below before the 2026-07-13 public rename/republish. `lauras-core`,
+`lauras-mcp`, `lauras-team`, and `lauras-api` are all published on crates.io at v0.2.0;
+`lauras-api` is also deployed at [laura-api.fly.dev](https://laura-api.fly.dev), serving
+`/mcp` (what the [Smithery](https://smithery.ai) listing uses), `/review`, and `/team`.
+50 unit tests, verified end-to-end against both the local stdio server and the live
 public URL.
-
-License terms in `LICENSE-LGPL`/`LICENSE-BSL` are still explicitly marked as a
-starting proposal pending Laura's own final confirmation — read the NOTE at
-the top of each before relying on them for reuse.
 
 An earlier version of this tool called an LLM (NVIDIA-hosted) per lens. That
 path is gone — not deferred, removed — after the NVIDIA account hit a
@@ -98,8 +103,8 @@ her work or this project's own judgment call.**
 ## Quick start
 
 ```bash
-cargo install laura-mcp
-claude mcp add laura -s user -- laura-mcp
+cargo install lauras-mcp
+claude mcp add laura -s user -- lauras-mcp
 ```
 
 No API key, no environment setup. Then, from any MCP-connected agent:
@@ -108,34 +113,42 @@ No API key, no environment setup. Then, from any MCP-connected agent:
 // tools/call, name: "review_plan"
 { "text": "# Goals\n...\n# Success Criteria\n..." }
 // omit "lenses" to run all four; or request a subset, e.g. ["eight_layer","uip_check"]
+
+// tools/call, name: "review_team"
+{ "text": "We deploy with no rollback and store personal data without consent." }
+// omit "agents" to run all 15; or request a subset, e.g. ["osint", "data_privacy"]
 ```
 
 ## Hosted API
 
-`laura-api` is deployed to Fly.io. Two surfaces on the same server:
+`lauras-api` is deployed to Fly.io. Three surfaces on the same server:
 
 - `POST /mcp` — MCP JSON-RPC over HTTP, keyless, rate-limited only. This is what
   the [Smithery listing](https://smithery.ai) points at, so any MCP-connected
   agent can use `review_plan` with zero setup.
-- `POST /review` — plain REST convenience endpoint, `Authorization: Bearer
-  <key>` required, same JSON body/response shape. `GET /health` for a liveness
-  check. 10 req/min per IP by default on both — abuse/DoS hygiene, not cost
-  protection (there's no external API cost per request anymore).
+- `POST /review` / `POST /team` — plain REST convenience endpoints, `Authorization:
+  Bearer <key>` required, same JSON body/response shapes as the MCP tools. `GET
+  /health` for a liveness check. 10 req/min per IP by default on all three —
+  abuse/DoS hygiene, not cost protection (there's no external API cost per
+  request, ever — both `/review` and `/team` are fully local computation).
 
 ## Workspace layout
 
 ```
-laura-core/   pure lens logic — package name "call-laura-core" on crates.io,
+laura-core/   pure lens logic — package name "lauras-core" on crates.io,
               open-core, LGPL-3.0-or-later
-laura-mcp/    stdio MCP server binary (BSL-1.1)
-laura-api/    Fly-hosted HTTP surface, deploy-only, not published (BSL-1.1)
-laura-team/   proprietary 15-agent "SWAT team" module + Laura orchestrator (BSL-1.1)
-              — the paid analysis layer; free 4-lens core lives in laura-core
+laura-mcp/    stdio MCP server binary, "lauras-mcp" on crates.io (BSL-1.1)
+laura-api/    Fly-hosted HTTP surface, "lauras-api" on crates.io, also deployed (BSL-1.1)
+laura-team/   15-agent "SWAT team" module + Laura orchestrator, "lauras-team" on
+              crates.io (BSL-1.1) — free 4-lens core lives in laura-core
 ```
+
+Every directory keeps its original name; only the crates.io package identity changed
+in the 2026-07-13 rename (see each crate's own `Cargo.toml` for the `name` field).
 
 ## License
 
-`call-laura-core`: LGPL-3.0-or-later. `laura-mcp`/`laura-api`: Business Source License
-1.1 with a non-commercial/research use grant. **Draft, pending Laura Serna
-Gaviria's confirmation** — see the NOTE at the top of `LICENSE-LGPL` and
-`LICENSE-BSL`. Full terms in `LICENSE`.
+`lauras-core`: LGPL-3.0-or-later. `lauras-mcp`/`lauras-api`/`lauras-team`: Business
+Source License 1.1 with a non-commercial/research use grant, commercial/production use
+requires a license from RFI-IRFOS. Confirmed with Laura Serna Gaviria 2026-07-13 — see
+the NOTE at the top of `LICENSE-LGPL` and `LICENSE-BSL`. Full terms in `LICENSE`.

@@ -1,6 +1,6 @@
 [package]
-name = "laura-mcp"
-description = "call-laura stdio MCP server — review_plan tool over Laura Serna Gaviria's Human-AI Co-Evolution framework plus RFI-IRFOS's own lenses."
+name = "lauras-mcp"
+description = "lauras-core stdio MCP server — review_plan (free) + review_team (Laura's 15-agent team) over Laura Serna Gaviria's Human-AI Co-Evolution framework plus RFI-IRFOS's own lenses."
 version.workspace = true
 edition.workspace = true
 license = "LicenseRef-BSL-1.1"
@@ -13,7 +13,7 @@ readme = "README.md"
 
 [dependencies]
 call-laura-core = { workspace = true }
-laura-team = { path = "../laura-team" }
+laura-team = { path = "../laura-team", version = "0.2.0", package = "lauras-team" }
 serde = { workspace = true }
 serde_json = { workspace = true }
 tokio = { workspace = true }

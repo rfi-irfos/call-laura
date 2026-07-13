@@ -1,15 +1,20 @@
-# laura-team
+# lauras-team
 
-**Call Laura's proprietary analysis module** — Laura (orchestrator) + a 15-agent expert
-"SWAT team". This is the *paid* layer: the deterministic, LGPL `call-laura-core`
-(review / `review_plan`) stays free; `laura-team` is BSL-1.1 and ships the full stack.
+(Renamed 2026-07-13 from `laura-team`.)
+
+**Laura's expert analysis module** — an orchestrator + a 15-agent expert "SWAT team".
+The deterministic, LGPL [`lauras-core`](https://crates.io/crates/lauras-core) (review /
+`review_plan`) is the free foundation; `lauras-team` is BSL-1.1, source-available with
+commercial use requiring a license from RFI-IRFOS, and ships the full 15-agent stack. It's
+reachable today with zero setup via [`lauras-mcp`](https://crates.io/crates/lauras-mcp)'s
+`review_team` tool, or key-gated over HTTP via `lauras-api`'s `/team` route.
 
 ## Why it matters
 
-`call-laura-core`'s four lenses catch a specific, narrow set of gaps in a plan or document.
+`lauras-core`'s four lenses catch a specific, narrow set of gaps in a plan or document.
 Real-world review pulls in far more domains at once — security, legal exposure, finance,
 operations, hiring language, accessibility — and a single generalist pass tends to either miss
-whole categories or blur them into one vague verdict. `laura-team` runs 15 domain-specialist
+whole categories or blur them into one vague verdict. `lauras-team` runs 15 domain-specialist
 agents over the *same* text in parallel, each one a narrow, deterministic pass looking for its
 own category of concern, then synthesizes what they found: which regions of the text multiple
 independent specialists flagged without being told to agree, and what the single highest-
@@ -80,13 +85,23 @@ println!("{}", resp.summary);
 println!("risk band: {:?}", resp.synthesis.risk_band);
 ```
 
-### HTTP (paid route)
+### HTTP (key-gated route)
 
-`laura-api` exposes `POST /team` (key-gated, rate-limited) returning the same
+`lauras-api` exposes `POST /team` (key-gated, rate-limited) returning the same
 `TeamResponse` as JSON. The free `POST /review` (4-lens core) is unchanged.
+
+## The lauras family
+
+- **[`lauras-core`](https://crates.io/crates/lauras-core)** — the deterministic 4-lens engine
+  this crate's own `call_laura_core::schema` types are shared with. Read its "Attribution &
+  Sourcing" section first.
+- **[`lauras-mcp`](https://crates.io/crates/lauras-mcp)** — stdio MCP server wrapping this
+  crate's `review_team` alongside the free `review_plan`, zero setup.
+- **`lauras-api`** — the same tools over HTTP, deployed at
+  [laura-api.fly.dev](https://laura-api.fly.dev).
 
 ## Build & test
 
 ```bash
-cargo test -p laura-team
+cargo test -p lauras-team
 ```

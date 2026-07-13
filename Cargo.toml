@@ -3,7 +3,7 @@ members = ["laura-core", "laura-mcp", "laura-api", "laura-team"]
 resolver = "2"
 
 [workspace.package]
-version    = "0.1.0"
+version    = "0.2.0"
 edition    = "2021"
 repository = "https://github.com/rfi-irfos/call-laura"
 homepage   = "https://rfi-irfos.com"
@@ -15,18 +15,18 @@ keywords    = ["human-ai-interaction", "co-evolution", "mcp", "review", "agent-t
 categories  = ["science"]
 
 # NOTE ON LICENSING (see plan Sec. 4 and README "Attribution & Sourcing" section):
-# This is a *starting proposal*, not finalized. laura-core carries LGPL-3.0-or-later
-# below at the per-crate level (methodology should be maximally inspectable). The two
-# server binaries (laura-mcp, laura-api) override with LicenseRef-BSL-1.1 in their own
-# Cargo.toml, matching RFI-IRFOS's ternlang-mcp/ternlang-api precedent. Confirm with
-# Laura before this ships publicly — her preference may differ from the ternlang default.
+# laura-core carries LGPL-3.0-or-later below at the per-crate level (methodology
+# should be maximally inspectable). The two server binaries (laura-mcp, laura-api)
+# and the team module override with LicenseRef-BSL-1.1 in their own Cargo.toml,
+# matching RFI-IRFOS's ternlang-mcp/ternlang-api precedent. Confirmed with Laura
+# 2026-07-13 — cleared to ship publicly under these terms.
 license = "LGPL-3.0-or-later"
 
 [workspace.dependencies]
-# Package is "call-laura-core" (crates.io: "laura-core" was already taken by an
-# unrelated chess-engine crate, checked before publishing) - the directory stays
-# laura-core/ since renaming the folder mid-project has no benefit.
-call-laura-core = { path = "laura-core", version = "0.1.0", package = "call-laura-core" }
+# Package is "lauras-core" on crates.io (2026-07-13 rename from call-laura-core,
+# part of the lauras-* family alongside lauras-mcp/lauras-api/lauras-team) - the
+# directory stays laura-core/ since renaming the folder mid-project has no benefit.
+call-laura-core = { path = "laura-core", version = "0.2.0", package = "lauras-core" }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 tokio = { version = "1.0", features = ["full"] }

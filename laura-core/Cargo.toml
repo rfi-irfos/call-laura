@@ -1,5 +1,5 @@
 [package]
-name = "call-laura-core"
+name = "lauras-core"
 description = "Structured document review grounded in Laura Serna Gaviria's Human-AI Co-Evolution framework (UIP, 8-Layer Model) plus RFI-IRFOS's own resonance and ecocentric lenses. Fully deterministic and local — no network call, no API key."
 version.workspace = true
 edition.workspace = true
