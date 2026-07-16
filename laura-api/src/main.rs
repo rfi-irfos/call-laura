@@ -168,29 +168,29 @@ async fn main() {
         .filter(|s| !s.is_empty())
         .filter_map(|s| axum::http::HeaderValue::from_str(&s).ok())
         .collect();
-    // Secure default: no cross-origin sharing. MCP hosts (Smithery, etc.) call
-    // this endpoint server-to-server, so CORS is not required for them; this
-    // only restricts browser-based cross-origin callers. Set
-    // LAURA_API_CORS_ORIGINS (comma-separated) to allow specific browser origins.
-    let cors = if allowed_origins.is_empty() {
-        tower_http::cors::CorsLayer::new()
-            .allow_methods([axum::http::Method::GET, axum::http::Method::POST])
-            .allow_headers([axum::http::header::AUTHORIZATION, axum::http::header::CONTENT_TYPE])
-    } else {
-        tower_http::cors::CorsLayer::new()
-            .allow_methods([axum::http::Method::GET, axum::http::Method::POST])
-            .allow_headers([axum::http::header::AUTHORIZATION, axum::http::header::CONTENT_TYPE])
-            .allow_origin(allowed_origins)
-    };
-
+    // Secure default: NO cross-origin sharing. tower_http's CorsLayer emits
+    // `Access-Control-Allow-Origin: *` by DEFAULT when no origin is set, so an
+    // empty allowlist must mean *no CORS layer at all* — not an empty one.
+    // MCP hosts (Smithery, etc.) call this endpoint server-to-server, so CORS
+    // is not required for them. Set LAURA_API_CORS_ORIGINS (comma-separated) to
+    // allow specific browser origins; only then is a CORS layer attached.
     let app = Router::new()
         .route("/health", get(health))
         .route("/review", post(review_handler))
         .route("/team", post(team_handler))
         .route("/mcp", post(mcp_handler))
         .layer(tower_http::trace::TraceLayer::new_for_http())
-        .layer(cors)
         .with_state(state);
+    let app = if allowed_origins.is_empty() {
+        app
+    } else {
+        app.layer(
+            tower_http::cors::CorsLayer::new()
+                .allow_methods([axum::http::Method::GET, axum::http::Method::POST])
+                .allow_headers([axum::http::header::AUTHORIZATION, axum::http::header::CONTENT_TYPE])
+                .allow_origin(allowed_origins),
+        )
+    };
 
     let addr = SocketAddr::from(([0, 0, 0, 0], port));
     println!("[laura-api] listening on {addr}");
