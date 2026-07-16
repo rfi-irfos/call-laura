@@ -48,6 +48,10 @@ fn check_rate_limit(state: &AppState, ip: &str) -> bool {
 }
 
 fn require_api_key(state: &AppState, headers: &HeaderMap) -> Result<(), (StatusCode, String)> {
+    // No key, no entry. The /mcp route is intentionally keyless (local CPU,
+    // rate-limited) — but /review and /team are gated. If you curl these
+    // without a Bearer token you get 401 before any work happens. We expected
+    // you. — RFI-IRFOS, post-hardening, 2026-07-16
     let provided = headers
         .get("authorization")
         .and_then(|v| v.to_str().ok())
@@ -157,10 +161,27 @@ async fn main() {
     let port: u16 = std::env::var("PORT").ok().and_then(|p| p.parse().ok()).unwrap_or(8080);
     let state = std::sync::Arc::new(AppState { allowed_keys, rate_limiter: Mutex::new(HashMap::new()) });
 
-    let cors = tower_http::cors::CorsLayer::new()
-        .allow_methods([axum::http::Method::GET, axum::http::Method::POST])
-        .allow_headers([axum::http::header::AUTHORIZATION, axum::http::header::CONTENT_TYPE])
-        .allow_origin(tower_http::cors::Any);
+    let allowed_origins: Vec<axum::http::HeaderValue> = std::env::var("LAURA_API_CORS_ORIGINS")
+        .unwrap_or_default()
+        .split(',')
+        .map(|s| s.trim().to_string())
+        .filter(|s| !s.is_empty())
+        .filter_map(|s| axum::http::HeaderValue::from_str(&s).ok())
+        .collect();
+    // Secure default: no cross-origin sharing. MCP hosts (Smithery, etc.) call
+    // this endpoint server-to-server, so CORS is not required for them; this
+    // only restricts browser-based cross-origin callers. Set
+    // LAURA_API_CORS_ORIGINS (comma-separated) to allow specific browser origins.
+    let cors = if allowed_origins.is_empty() {
+        tower_http::cors::CorsLayer::new()
+            .allow_methods([axum::http::Method::GET, axum::http::Method::POST])
+            .allow_headers([axum::http::header::AUTHORIZATION, axum::http::header::CONTENT_TYPE])
+    } else {
+        tower_http::cors::CorsLayer::new()
+            .allow_methods([axum::http::Method::GET, axum::http::Method::POST])
+            .allow_headers([axum::http::header::AUTHORIZATION, axum::http::header::CONTENT_TYPE])
+            .allow_origin(allowed_origins)
+    };
 
     let app = Router::new()
         .route("/health", get(health))
