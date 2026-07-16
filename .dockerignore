@@ -1,0 +1,12 @@
+# Keep the fly build context small + fast: exclude build artifacts, git,
+# and local junk so `fly deploy` doesn't upload hundreds of MB every time.
+target/
+**/target/
+.git/
+.gitignore
+*.md
+.env
+.env.*
+Dockerfile
+fly.toml
+.dockerignore
