@@ -1,5 +1,8 @@
 # lauras (formerly call-laura)
 
+## Human rights are not subject to negotiation.
+
+
 [![license](https://img.shields.io/badge/license-LGPL--3.0--or--later%20%2F%20BSL--1.1-blue)](./LICENSE)
 [![status](https://img.shields.io/badge/status-live-brightgreen)](#status)
 [![crates.io](https://img.shields.io/crates/v/lauras-core.svg)](https://crates.io/crates/lauras-core)
